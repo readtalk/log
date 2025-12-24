@@ -61,7 +61,7 @@ export default {
 			theme: {
 				title: "myAuth",
 				primary: "#0051c3",
-				favicon: "https://workers.cloudflare.com//favicon.ico",
+				favicon: "https://readtalk.vercel.app/favicon.ico",
 				logo: {
 					dark: "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/db1e5c92-d3a6-4ea9-3e72-155844211f00/public",
 					light:
