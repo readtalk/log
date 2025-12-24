@@ -60,7 +60,7 @@ export default {
 			},
 			theme: {
 				title: "READTalk Authentication",
-				primary: "#c33600",
+				primary: "#ff0000",
 				favicon: "https://readtalk.vercel.app/favicon.ico",
 				logo: {
 					dark: "https://readtalk.vercel.app/brand-assets.png",
