@@ -14,24 +14,19 @@ const subjects = createSubjects({
 export default {
 	fetch(request: Request, env: Env, ctx: ExecutionContext) {
 		const url = new URL(request.url);
-		
-		// **PERUBAHAN SATU-SATUNYA (sesuai permintaan):**
-		// Ganti alur demo OAuth dengan redirect ke chat.readtalk (URL dalam base64)
 		if (url.pathname === "/") {
-			const b = 'aHR0cHM6Ly9jaGF0LnJlYWR0YWxrLndvcmtlcnMuZGV2'; // https://chat.readtalk.workers.dev
-			const targetUrl = atob(b);
-			return Response.redirect(targetUrl, 302);
-		}
-		// **AKHIR DARI MODIFIKASI**
-		
-		else if (url.pathname === "/callback") {
+			url.searchParams.set("redirect_uri", url.origin + "/callback");
+			url.searchParams.set("client_id", "your-client-id");
+			url.searchParams.set("response_type", "code");
+			url.pathname = "/authorize";
+			return Response.redirect(url.toString());
+		} else if (url.pathname === "/callback") {
 			return Response.json({
 				message: "OAuth flow complete!",
 				params: Object.fromEntries(url.searchParams.entries()),
 			});
 		}
 
-		// The real OpenAuth server code starts here (TIDAK DIUBAH):
 		return issuer({
 			storage: CloudflareStorage({
 				namespace: env.AUTH_STORAGE,
@@ -59,9 +54,26 @@ export default {
 				},
 			},
 			success: async (ctx, value) => {
-				return ctx.subject("user", {
-					id: await getOrCreateUser(env, value.email),
+				const userId = await getOrCreateUser(env, value.email);
+				
+				const roomResponse = await fetch('https://chat.readtalk.workers.dev/api/user-room', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email: value.email })
 				});
+				
+				if (!roomResponse.ok) {
+					return Response.redirect('https://chat.readtalk.workers.dev', 302);
+				}
+				
+				const { roomId } = await roomResponse.json();
+				
+				await env.AUTH_DB.prepare(
+					`INSERT OR REPLACE INTO user_rooms (email, room_id) VALUES (?, ?)`
+				).bind(value.email, roomId).run();
+				
+				const pwaUrl = `https://user-readtalk.pages.dev?room=${roomId}`;
+				return Response.redirect(pwaUrl, 302);
 			},
 		}).fetch(request, env, ctx);
 	},
