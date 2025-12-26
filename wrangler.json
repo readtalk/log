@@ -24,6 +24,12 @@
 			}
 		]
 	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_classes": ["LogRoom"]
+		}
+	],
 	"observability": {
 		"enabled": true
 	},
