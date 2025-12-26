@@ -20,14 +20,14 @@
 		"bindings": [
 			{
 				"name": "LOG_ROOM_DO",
-				"class_name": "LogRoom"
+				"class_name": "chat_Chat"
 			}
 		]
 	},
 	"migrations": [
 		{
 			"tag": "v1",
-			"new_classes": ["LogRoom"]
+			"new_classes": ["chat_Chat"]
 		}
 	],
 	"observability": {
