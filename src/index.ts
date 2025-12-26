@@ -89,5 +89,5 @@ export default {
 	},
 };
 
-// --- TAMBAHAN BARU: Export class LogRoom untuk binding ---
-export { LogRoom };
+// --- HAPUS BARIS INI: export { LogRoom }; ---
+// Class LogRoom sudah diexport di baris 9, jadi tidak perlu export lagi
